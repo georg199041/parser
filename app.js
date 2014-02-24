@@ -11,25 +11,26 @@ request('http://makeup.com.ua/', function (error, response, body) {
         var parser = new htmlparser.Parser({
             onopentag: function(name, attribs){
                 if (name == 'img') {
-                    console.log(attribs)
+                    data.push(attribs);
                 }
             },
             onattribute: function(name, value) {
                 
-            }
+            },
             ontext: function(text){
-                console.log(text)
+                //console.log(text)
             },
             onclosetag: function(tagname){
                // data.push()
+            },
+            onend: function() {
+                fs.writeFile('./test.json', JSON.stringify(util.inspect(data, { showHidden: true, depth: 1 }), null, 4), function(err) {
+                    if (err) throw err;
+                });
             }
         });
         parser.write(body);
-        parser.done(function() {
-            fs.writeFile('./test.json', JSON.stringify(util.inspect(data, { showHidden: true, depth: 1 }), null, '\t'), function(err) {
-                if (err) throw err;
-            });
-        });
+        parser.done();
     }
 });
 
